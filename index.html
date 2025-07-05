@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <title>De Alisis</title>
+  <style>
+    :root { --sky:#a0d8ef; --horizon:#f9fbff; --heartMain:#ff5ca1; --heartEdge:#e3397b; }
+    *{margin:0;padding:0;box-sizing:border-box;}
+    body{height:100vh;overflow:hidden;background:linear-gradient(var(--sky) 0%,var(--horizon) 75%);position:relative;font-family:'Segoe UI',Tahoma,Geneva,Verdana,sans-serif;}
+
+    /* ===== Corazones que caen ===== */
+    .heart{--s:1;--dur:6s;width:50px;height:45px;position:absolute;transform:rotate(-45deg) scale(var(--s));background:radial-gradient(circle at 30% 30%,var(--heartMain) 40%,var(--heartEdge) 100%);animation:fall var(--dur) linear forwards;filter:drop-shadow(0 4px 4px rgba(0,0,0,.15));pointer-events:none;z-index:5;}
+    .heart::before,.heart::after{content:"";position:absolute;width:50px;height:45px;border-radius:50%;background:inherit;}
+    .heart::before{top:-25px;}
+    .heart::after{left:25px;}
+    @keyframes fall{0%{transform:translateY(-10vh) rotate(-45deg) scale(var(--s));opacity:1;}100%{transform:translateY(110vh) rotate(-45deg) scale(var(--s));opacity:.7;}}
+
+    /* ===== Nubes ===== */
+    .cloud{--s:1;--dur:25s;position:absolute;width:120px;height:60px;background:#fff;border-radius:50%;box-shadow:-35px 15px 0 -10px #fff,35px 15px 0 -10px #fff,0 25px 0 -8px #fff;filter:blur(.5px) drop-shadow(0 2px 4px rgba(0,0,0,.1));opacity:.92;animation:drift var(--dur) linear forwards;transform:scale(var(--s));pointer-events:none;z-index:1;}
+    @keyframes drift{0%{transform:translateX(var(--startX)) scale(var(--s));}100%{transform:translateX(var(--endX)) scale(var(--s));}}
+
+    /* ===== Sobre ===== */
+    .sobre{position:absolute;top:50%;left:50%;width:220px;height:170px;transform:translate(-50%,-50%);cursor:pointer;perspective:700px;z-index:20;}
+
+    .sobre-solapa{position:absolute;top:0;left:0;width:0;height:0;border-left:110px solid transparent;border-right:110px solid transparent;border-bottom:70px solid #f06c8a;transform-origin:bottom center;transition:transform .8s ease,opacity .4s ease;z-index:30;pointer-events:none;}
+
+    .sobre-base{position:absolute;top:70px;left:0;width:220px;height:100px;background:#f7b5c3;border-radius:0 0 8px 8px;box-sizing:border-box;border:2px solid #e15b7b;border-top:none;transition:opacity .4s ease;z-index:10;}
+
+    .sobre-corazon{position:absolute;top:125px;left:50%;transform:translateX(-50%);font-size:38px;color:#d8366a;z-index:25;pointer-events:none;transition:opacity .4s ease;}
+
+    .sobre-corazones-pequenos{position:absolute;top:0;left:0;width:220px;height:100px;pointer-events:none;z-index:15;transition:opacity .4s ease;}
+    .corazon-pequeno{position:absolute;font-size:14px;color:#ff6699;opacity:.75;animation:latido 2s infinite alternate ease-in-out;}
+    @keyframes latido{0%{transform:scale(1);opacity:.75;}100%{transform:scale(1.3);opacity:1;}}
+
+    /* ===== Carta ===== */
+    .carta-interior{position:absolute;top:140px;left:50%;width:200px;max-height:350px;background:#fff8f9;border-radius:15px;box-shadow:0 10px 30px rgba(0,0,0,.3);padding:20px 25px;transform:translateX(-50%) translateY(0) scale(.9);opacity:0;transition:transform .8s ease,opacity .8s ease;font-style:italic;font-family:'Dancing Script',cursive,serif;font-size:1rem;color:#a42e5a;overflow-y:auto;z-index:5;}
+    .carta-interior.mostrar{transform:translateX(-50%) translateY(-190px) scale(1.7);opacity:1;}
+
+    /* Sobre oculto */
+    .oculto{opacity:0;pointer-events:none;}
+
+    /* ===== Destellos ===== */
+    .destellos{position:absolute;top:50%;left:50%;width:350px;height:350px;pointer-events:none;transform:translate(-50%,-50%);z-index:25;overflow:visible;}
+    @keyframes destello{0%,100%{opacity:0;transform:scale(.5) rotate(0);}50%{opacity:1;transform:scale(1.2) rotate(20deg);}}
+    .destello-corazon,.destello-estrella{position:absolute;width:20px;height:20px;fill:#ff5ca1;opacity:0;animation-name:destello;animation-timing-function:ease-in-out;animation-iteration-count:infinite;}
+    .destello-estrella{fill:#f9e547;}
+  </style>
+  <link href="https://fonts.googleapis.com/css2?family=Dancing+Script&display=swap" rel="stylesheet" />
+</head>
+<body>
+  <div class="sobre" role="button" tabindex="0" aria-pressed="false" aria-label="Sobre con carta, hacer clic para abrir">
+    <div class="sobre-solapa"></div>
+    <div class="sobre-base"></div>
+    <div class="sobre-corazon">&#10084;</div>
+    <div class="sobre-corazones-pequenos">
+      <span class="corazon-pequeno" style="top:-28px;left:25px;">&#10084;</span>
+      <span class="corazon-pequeno" style="top:-14px;left:65px;animation-delay:.2s">&#10084;</span>
+      <span class="corazon-pequeno" style="top:-32px;left:105px;animation-delay:.4s">&#10084;</span>
+      <span class="corazon-pequeno" style="top:-18px;left:145px;animation-delay:.6s">&#10084;</span>
+      <span class="corazon-pequeno" style="top:-26px;left:185px;animation-delay:.8s">&#10084;</span>
+    </div>
+    <div class="carta-interior" id="cartaInterior" aria-live="polite" aria-label="Carta interior con mensaje de amor">Te amo, amorcito, con toda mi alma y todo mi ser. Sé que a veces discutimos, pero mi amor por ti es inmenso y no quiero que lo dudes nunca. Cada abrazo tuyo ilumina mi mundo. Gracias por llegar a mi vida y darle brillo a mis días. Te amo con todo mi ser y adoro cada parte de ti. ❤</div>
+  </div>
+  <div class="destellos" id="destellos"></div>
+  <script>
+    setInterval(()=>{const h=document.createElement('div');h.className='heart';const s=(Math.random()*0.7+0.6).toFixed(2);const d=(Math.random()*3+4).toFixed(1)+'s';h.style.left=Math.random()*100+'vw';h.style.setProperty('--s',s);h.style.setProperty('--dur',d);document.body.appendChild(h);setTimeout(()=>h.remove(),parseFloat(d)*1000+1000);},250);
+    setInterval(()=>{const nube=document.createElement('div');nube.className='cloud';const s=(Math.random()*0.9+0.5).toFixed(2);const d=(Math.random()*12+18).toFixed(1)+'s';const side=Math.random()<0.5?'left':'right';const startX=side==='left'?'-130vw':'130vw';const endX=side==='left'?'130vw':'-130vw';nube.style.top=Math.random()*60+'vh';nube.style.setProperty('--s',s);nube.style.setProperty('--dur',d);nube.style.setProperty('--startX',startX);nube.style.setProperty('--endX',endX);document.body.appendChild(nube);setTimeout(()=>nube.remove(),parseFloat(d)*1000+1000);},1200);
+    const sobre=document.querySelector('.sobre');const solapa=document.querySelector('.sobre-solapa');const base=document.querySelector('.sobre-base');const decor=document.querySelector('.sobre-corazones-pequenos');const corazon=document.querySelector('.sobre-corazon');const carta=document.getElementById('cartaInterior');const dest=document.getElementById('destellos');let abierto=false;const svgns='http://www.w3.org/2000/svg';function newDestello(tipo){const svg=document.createElementNS(svgns,'svg');svg.setAttribute('width','20');svg.setAttribute('height','20');svg.classList.add(tipo==='corazon'?'destello-corazon':'destello-estrella');const path=document.createElementNS(svgns,'path');path.setAttribute('fill',tipo==='corazon'?'#ff5ca1':'#f9e547');path.setAttribute('d',tipo==='corazon'?'M10 30 C10 15 25 15 25 30 C25 45 10 45 10 30Z':'M10 1 L12.4 7.4 L19.5 7.4 L13.5 11.8 L16 18 L10 14 L4 18 L6.5 11.8 L0.5 7.4 L7.6 7.4 Z');svg.appendChild(path);svg.style.position='absolute';svg.style.left=Math.random()*90+'%';svg.style.top=Math.random()*90+'%';svg.style.animationDuration=(Math.random()*1+1)+'s';svg.style.animationDelay=(Math.random()*2)+'s';return svg;}
+    function destellos(){dest.innerHTML='';for(let i=0;i<10;i++){dest.appendChild(newDestello('corazon'));dest.appendChild(newDestello('estrella'));}}
+    function abrir(){solapa.style.transform='rotateX(180deg)';carta.classList.add('mostrar');setTimeout(()=>{solapa.classList.add('oculto');base.classList.add('oculto');decor.classList.add('oculto');corazon.classList.add('oculto');},800);destellos();}
+    function cerrar(){solapa.classList.remove('oculto');base.classList.remove('oculto');decor.classList.remove('oculto');corazon.classList.remove('oculto');setTimeout(()=>{solapa.style.transform='rotateX(0deg)';},50);carta.classList.remove('mostrar');dest.innerHTML='';}
+    function toggle(){abierto?cerrar():abrir();abierto=!abierto;sobre.setAttribute('aria-pressed',abierto?'true':'false');}
+    sobre.addEventListener('click',toggle);sobre.addEventListener('keydown',e=>{if(e.key==='Enter'||e.key===' '){e.preventDefault();toggle();}});
+  </script>
+</body>
+</html>
